@@ -101,6 +101,7 @@ function downloadCsv(){
 </script>
 
 <style scoped>
+@reference "tailwindcss";
 .kpi{ @apply bg-white border border-gray-200 rounded p-4 flex items-center justify-between; }
 .kpi .label{ @apply text-gray-500; }
 .kpi .value{ @apply text-2xl font-semibold; }

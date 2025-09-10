@@ -1,23 +1,86 @@
 <template>
-  <div>
+  <div class="landing-app">
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="container">
+        <div class="nav-content">
+          <a href="/" class="logo">
+            <span class="material-icons">local_hospital</span>
+            منصة علوم الطب العربي
+          </a>
+          <div class="nav-links">
+            <a href="/admin" class="material-btn outline">لوحة الإدارة</a>
+            <a href="/student/login" class="material-btn">دخول الطلاب</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
     <!-- Hero Section -->
     <section class="hero">
       <div class="container">
-        <h1>Arab‑Med — المنصة العربية لعلوم الطب</h1>
-        <p>دورات، فيديوهات، ووثائق طبية باللغة العربية مع اختبارات وتتبّع للتقدم.</p>
-        <div style="margin-top:1rem">
-          <a href="/student" class="btn">الانتقال إلى واجهة الطالب</a>
-          <a href="/admin" class="btn" style="background:#10b981">لوحة الإدارة / المعلم</a>
+        <div class="hero-content">
+          <h1>منصة علوم الطب العربي</h1>
+          <p>منصة تعليمية متقدمة لتدريس العلوم الطبية باللغة العربية مع أحدث التقنيات والأساليب التفاعلية</p>
+          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <button @click="openCourseModal" class="material-btn">
+              <span class="material-icons">add</span>
+              إضافة دورة جديدة
+            </button>
+            <a href="/student" class="material-btn secondary">
+              <span class="material-icons">school</span>
+              بوابة الطلاب
+            </a>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- KPIs -->
-    <section class="container" style="margin-top:1rem">
-      <div class="grid">
-        <div class="col-span-12 md:col-span-4"><KpiCard :label="'الدورات'" :value="stats.courses" /></div>
-        <div class="col-span-12 md:col-span-4"><KpiCard :label="'الفيديوهات'" :value="stats.videos" /></div>
-        <div class="col-span-12 md:col-span-4"><KpiCard :label="'الاختبارات'" :value="stats.exams" /></div>
+    <!-- KPI Section -->
+    <section class="section" style="background: var(--surface-variant);">
+      <div class="container">
+        <div class="section-header">
+          <h2>إحصائيات المنصة</h2>
+          <p>نظرة شاملة على أداء وإحصائيات المنصة التعليمية</p>
+        </div>
+        <div class="grid grid-cols-4">
+          <div class="material-card kpi-card">
+            <div class="kpi-content">
+              <h3>الطلاب المسجلون</h3>
+              <div class="value">{{ stats.students }}</div>
+            </div>
+            <div class="kpi-icon students">
+              <span class="material-icons">people</span>
+            </div>
+          </div>
+          <div class="material-card kpi-card">
+            <div class="kpi-content">
+              <h3>الدورات المتاحة</h3>
+              <div class="value">{{ stats.courses }}</div>
+            </div>
+            <div class="kpi-icon courses">
+              <span class="material-icons">menu_book</span>
+            </div>
+          </div>
+          <div class="material-card kpi-card">
+            <div class="kpi-content">
+              <h3>مقاطع الفيديو</h3>
+              <div class="value">{{ stats.videos }}</div>
+            </div>
+            <div class="kpi-icon videos">
+              <span class="material-icons">play_circle</span>
+            </div>
+          </div>
+          <div class="material-card kpi-card">
+            <div class="kpi-content">
+              <h3>الامتحانات</h3>
+              <div class="value">{{ stats.exams }}</div>
+            </div>
+            <div class="kpi-icon exams">
+              <span class="material-icons">quiz</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -39,6 +102,353 @@
         </div>
 
         <div style="overflow:auto;margin-top:.5rem">
+          <template>
+            <div class="landing-app">
+              <!-- Navigation -->
+              <nav class="nav">
+                <div class="container">
+                  <div class="nav-content">
+                    <a href="/" class="logo">
+                      <span class="material-icons">local_hospital</span>
+                      منصة علوم الطب العربي
+                    </a>
+                    <div class="nav-links">
+                      <a href="/admin" class="material-btn outline">لوحة الإدارة</a>
+                      <a href="/student/login" class="material-btn">دخول الطلاب</a>
+                    </div>
+                  </div>
+                </div>
+              </nav>
+
+              <!-- Hero Section -->
+              <section class="hero">
+                <div class="container">
+                  <div class="hero-content">
+                    <h1>منصة علوم الطب العربي</h1>
+                    <p>منصة تعليمية متقدمة لتدريس العلوم الطبية باللغة العربية مع أحدث التقنيات والأساليب التفاعلية</p>
+                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                      <button @click="openCourseModal" class="material-btn">
+                        <span class="material-icons">add</span>
+                        إضافة دورة جديدة
+                      </button>
+                      <a href="/student" class="material-btn secondary">
+                        <span class="material-icons">school</span>
+                        بوابة الطلاب
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- KPI Section -->
+              <section class="section" style="background: var(--surface-variant);">
+                <div class="container">
+                  <div class="section-header">
+                    <h2>إحصائيات المنصة</h2>
+                    <p>نظرة شاملة على أداء وإحصائيات المنصة التعليمية</p>
+                  </div>
+                  <div class="grid grid-cols-4">
+                    <div class="material-card kpi-card">
+                      <div class="kpi-content">
+                        <h3>الطلاب المسجلون</h3>
+                        <div class="value">{{ stats.students }}</div>
+                      </div>
+                      <div class="kpi-icon students">
+                        <span class="material-icons">people</span>
+                      </div>
+                    </div>
+                    <div class="material-card kpi-card">
+                      <div class="kpi-content">
+                        <h3>الدورات المتاحة</h3>
+                        <div class="value">{{ stats.courses }}</div>
+                      </div>
+                      <div class="kpi-icon courses">
+                        <span class="material-icons">menu_book</span>
+                      </div>
+                    </div>
+                    <div class="material-card kpi-card">
+                      <div class="kpi-content">
+                        <h3>مقاطع الفيديو</h3>
+                        <div class="value">{{ stats.videos }}</div>
+                      </div>
+                      <div class="kpi-icon videos">
+                        <span class="material-icons">play_circle</span>
+                      </div>
+                    </div>
+                    <div class="material-card kpi-card">
+                      <div class="kpi-content">
+                        <h3>الامتحانات</h3>
+                        <div class="value">{{ stats.exams }}</div>
+                      </div>
+                      <div class="kpi-icon exams">
+                        <span class="material-icons">quiz</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Demo Table Section -->
+              <section class="section">
+                <div class="container">
+                  <div class="section-header">
+                    <h2>الدورات الحديثة</h2>
+                    <p>أحدث الدورات المضافة إلى المنصة</p>
+                  </div>
+                  <div class="material-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                      <h3 style="margin: 0;">قائمة الدورات</h3>
+                      <button @click="openVideoModal" class="material-btn">
+                        <span class="material-icons">video_library</span>
+                        إضافة فيديو
+                      </button>
+                    </div>
+                    <table class="material-table">
+                      <thead>
+                        <tr>
+                          <th @click="sortTable('title')">اسم الدورة <span class="material-icons" style="font-size: 16px;">sort</span></th>
+                          <th @click="sortTable('instructor')">المدرس</th>
+                          <th @click="sortTable('students')">عدد الطلاب</th>
+                          <th @click="sortTable('status')">الحالة</th>
+                          <th>الإجراءات</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="course in sortedCourses" :key="course.id">
+                          <td>{{ course.title }}</td>
+                          <td>{{ course.instructor }}</td>
+                          <td>{{ course.students }}</td>
+                          <td>
+                            <span :class="['status-badge', course.status]">
+                              {{ course.statusText }}
+                            </span>
+                          </td>
+                          <td>
+                            <button @click="editCourse(course)" class="material-btn" style="padding: 0.5rem;">
+                              <span class="material-icons">edit</span>
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div style="display: flex; justify-content: between; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.1);">
+                      <span>عرض 1-5 من 23 دورة</span>
+                      <div style="display: flex; gap: 0.5rem;">
+                        <button class="material-btn outline" style="padding: 0.5rem 1rem;">السابق</button>
+                        <button class="material-btn outline" style="padding: 0.5rem 1rem;">التالي</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Charts Section -->
+              <section class="section" style="background: var(--surface-variant);">
+                <div class="container">
+                  <div class="section-header">
+                    <h2>التقارير والإحصائيات</h2>
+                    <p>تحليلات مفصلة لأداء المنصة والطلاب</p>
+                  </div>
+                  <div class="grid grid-cols-2">
+                    <div class="material-card">
+                      <h3 style="margin-top: 0;">تسجيلات الطلاب الشهرية</h3>
+                      <div class="chart-container">
+                        <canvas ref="enrollmentChart"></canvas>
+                      </div>
+                    </div>
+                    <div class="material-card">
+                      <h3 style="margin-top: 0;">توزيع الدورات حسب التخصص</h3>
+                      <div class="chart-container">
+                        <canvas ref="categoryChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Student Progress Demo -->
+              <section class="section">
+                <div class="container">
+                  <div class="section-header">
+                    <h2>تقدم الطلاب</h2>
+                    <p>نموذج لوحة تحكم الطالب</p>
+                  </div>
+                  <div class="grid grid-cols-3">
+                    <div class="material-card">
+                      <h3 style="margin-top: 0;">التقدم العام</h3>
+                      <div style="margin: 1rem 0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                          <span>الدورات المكتملة</span>
+                          <span>75%</span>
+                        </div>
+                        <div style="background: #f3f4f6; height: 8px; border-radius: 4px; overflow: hidden;">
+                          <div style="background: var(--primary); height: 100%; width: 75%; transition: width 0.3s ease;"></div>
+                        </div>
+                      </div>
+                      <div style="margin: 1rem 0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                          <span>الامتحانات المجتازة</span>
+                          <span>85%</span>
+                        </div>
+                        <div style="background: #f3f4f6; height: 8px; border-radius: 4px; overflow: hidden;">
+                          <div style="background: var(--secondary); height: 100%; width: 85%; transition: width 0.3s ease;"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="material-card">
+                      <h3 style="margin-top: 0;">الإنجازات</h3>
+                      <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                          <div style="width: 40px; height: 40px; background: rgba(245, 158, 11, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <span class="material-icons" style="color: var(--accent);">star</span>
+                          </div>
+                          <div>
+                            <div style="font-weight: 600;">طالب متميز</div>
+                            <div style="font-size: 0.875rem; color: var(--on-surface-variant);">أكمل 10 دورات</div>
+                          </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                          <div style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <span class="material-icons" style="color: var(--secondary);">verified</span>
+                          </div>
+                          <div>
+                            <div style="font-weight: 600;">شهادة معتمدة</div>
+                            <div style="font-size: 0.875rem; color: var(--on-surface-variant);">في علم التشريح</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="material-card">
+                      <h3 style="margin-top: 0;">النشاط الأخير</h3>
+                      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <div style="padding: 0.75rem; background: var(--surface-variant); border-radius: 8px;">
+                          <div style="font-weight: 500;">مشاهدة فيديو</div>
+                          <div style="font-size: 0.875rem; color: var(--on-surface-variant);">أساسيات علم وظائف الأعضاء</div>
+                          <div style="font-size: 0.75rem; color: var(--on-surface-variant);">منذ ساعتين</div>
+                        </div>
+                        <div style="padding: 0.75rem; background: var(--surface-variant); border-radius: 8px;">
+                          <div style="font-weight: 500;">اجتياز امتحان</div>
+                          <div style="font-size: 0.875rem; color: var(--on-surface-variant);">امتحان الفصل الثالث - النتيجة: 92%</div>
+                          <div style="font-size: 0.75rem; color: var(--on-surface-variant);">أمس</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Course Modal -->
+              <div v-if="showCourseModal" class="modal-overlay" @click="closeCourseModal">
+                <div class="modal-content" @click.stop>
+                  <div class="modal-header">
+                    <h2>إضافة دورة جديدة</h2>
+                    <button @click="closeCourseModal" class="close-btn">
+                      <span class="material-icons">close</span>
+                    </button>
+                  </div>
+                  <form @submit.prevent="submitCourse">
+                    <div class="form-group">
+                      <label class="form-label">عنوان الدورة (عربي)</label>
+                      <input v-model="courseForm.title_ar" class="form-input" required />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">عنوان الدورة (إنجليزي)</label>
+                      <input v-model="courseForm.title_en" class="form-input" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">التخصص</label>
+                      <select v-model="courseForm.category_id" class="form-select" required>
+                        <option value="">اختر التخصص</option>
+                        <option value="1">علم التشريح</option>
+                        <option value="2">علم وظائف الأعضاء</option>
+                        <option value="3">علم الأمراض</option>
+                        <option value="4">الطب الباطني</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">المستوى</label>
+                      <select v-model="courseForm.level" class="form-select">
+                        <option value="beginner">مبتدئ</option>
+                        <option value="intermediate">متوسط</option>
+                        <option value="advanced">متقدم</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox-group">
+                        <input type="checkbox" v-model="courseForm.is_free" id="is_free" />
+                        <label for="is_free">دورة مجانية</label>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox-group">
+                        <input type="checkbox" v-model="courseForm.is_published" id="is_published" />
+                        <label for="is_published">نشر الدورة</label>
+                      </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                      <button type="button" @click="closeCourseModal" class="material-btn outline">إلغاء</button>
+                      <button type="submit" class="material-btn">
+                        <span class="material-icons">save</span>
+                        حفظ الدورة
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Video Modal -->
+              <div v-if="showVideoModal" class="modal-overlay" @click="closeVideoModal">
+                <div class="modal-content" @click.stop>
+                  <div class="modal-header">
+                    <h2>إضافة فيديو جديد</h2>
+                    <button @click="closeVideoModal" class="close-btn">
+                      <span class="material-icons">close</span>
+                    </button>
+                  </div>
+                  <form @submit.prevent="submitVideo">
+                    <div class="form-group">
+                      <label class="form-label">الدورة</label>
+                      <select v-model="videoForm.course_id" class="form-select" required>
+                        <option value="">اختر الدورة</option>
+                        <option value="1">أساسيات علم التشريح</option>
+                        <option value="2">علم وظائف الأعضاء المتقدم</option>
+                        <option value="3">مقدمة في علم الأمراض</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">عنوان الفيديو (عربي)</label>
+                      <input v-model="videoForm.title_ar" class="form-input" required />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">رابط الفيديو</label>
+                      <input v-model="videoForm.video_url" class="form-input" type="url" required />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">مدة الفيديو (بالثواني)</label>
+                      <input v-model="videoForm.duration_seconds" class="form-input" type="number" min="0" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">جودة الفيديو</label>
+                      <select v-model="videoForm.video_quality" class="form-select">
+                        <option value="">اختر الجودة</option>
+                        <option value="360p">360p</option>
+                        <option value="720p">720p</option>
+                        <option value="1080p">1080p</option>
+                        <option value="4k">4K</option>
+                      </select>
+                    </div>
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                      <button type="button" @click="closeVideoModal" class="material-btn outline">إلغاء</button>
+                      <button type="submit" class="material-btn">
+                        <span class="material-icons">save</span>
+                        حفظ الفيديو
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </template>
           <table class="tbl">
             <thead>
               <tr>
