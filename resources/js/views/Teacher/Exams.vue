@@ -3,7 +3,11 @@
     <h1>Manage Exams</h1>
 
     <div class="actions">
-      <button class="btn" @click="openCreate">+ New Exam</button>
+      <select v-model.number="courseId" @change="fetchExams" class="select">
+        <option :value="null">-- Select Course --</option>
+        <option v-for="c in courses" :key="c.id" :value="c.id">#{{ c.id }} - {{ c.title_ar }}</option>
+      </select>
+      <button class="btn" @click="openCreate" :disabled="!courseId">+ New Exam</button>
     </div>
 
     <table class="tbl">
@@ -39,22 +43,7 @@
     <div v-if="showExam" class="modal">
       <div class="modal-body">
         <h3>{{ examForm.id ? 'Edit Exam' : 'New Exam' }}</h3>
-        <form @submit.prevent="saveExam">
-          <label>Course ID <input v-model.number="examForm.course_id" type="number" required /></label>
-          <label>Title (AR) <input v-model="examForm.title_ar" required /></label>
-          <label>Title (EN) <input v-model="examForm.title_en" /></label>
-          <label>Time Limit (minutes) <input v-model.number="examForm.time_limit_minutes" type="number" min="1" /></label>
-          <label>Max Attempts <input v-model.number="examForm.max_attempts" type="number" min="1" /></label>
-          <label>Passing Score % <input v-model.number="examForm.passing_score" type="number" min="0" max="100" /></label>
-          <label>Total Marks <input v-model.number="examForm.total_marks" type="number" min="0" step="0.1" /></label>
-          <label>Active <input type="checkbox" v-model="examForm.is_active" /></label>
-          <label>Starts At <input v-model="examForm.starts_at" type="datetime-local" /></label>
-          <label>Ends At <input v-model="examForm.ends_at" type="datetime-local" /></label>
-          <div class="modal-actions">
-            <button class="btn" type="submit">Save</button>
-            <button class="btn" type="button" @click="closeExam">Close</button>
-          </div>
-        </form>
+        <ExamForm :modelValue="examForm" @update:modelValue="v=>Object.assign(examForm,v)" @submit="saveExam" @cancel="closeExam" />
       </div>
     </div>
 
@@ -102,8 +91,11 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import api from '../../services/api'
+import ExamForm from '../../components/Forms/ExamForm.vue'
 
 const items = ref([])
+const courses = ref([])
+const courseId = ref(null)
 const showExam = ref(false)
 const examForm = reactive({ id:null, course_id:null, title_ar:'', title_en:'', time_limit_minutes:null, max_attempts:null, passing_score:null, total_marks:null, is_active:false, starts_at:'', ends_at:'' })
 
@@ -112,19 +104,19 @@ const currentExam = ref(null)
 const questions = ref([])
 const qForm = reactive({ id:null, question_ar:'', question_type:'multiple_choice', marks:1 })
 
-async function fetchExams() {
-  // Load exams from the first course as a simple starting point
+async function loadCourses(){
   const { data } = await api.get('/courses?published=false')
-  const first = data?.data?.[0]
-  if (first) {
-    const res = await api.get(`/courses/${first.id}/exams`)
-    items.value = res.data?.data || []
-  } else {
-    items.value = []
-  }
+  courses.value = data?.data || []
+  if (!courseId.value && courses.value.length) courseId.value = courses.value[0].id
 }
 
-function openCreate(){ Object.assign(examForm, { id:null, course_id:null, title_ar:'', title_en:'', time_limit_minutes:null, max_attempts:null, passing_score:null, total_marks:null, is_active:false, starts_at:'', ends_at:'' }); showExam.value=true }
+async function fetchExams() {
+  if (!courseId.value) { items.value = []; return }
+  const res = await api.get(`/courses/${courseId.value}/exams`)
+  items.value = res.data?.data || []
+}
+
+function openCreate(){ Object.assign(examForm, { id:null, course_id:courseId.value, title_ar:'', title_en:'', time_limit_minutes:null, max_attempts:null, passing_score:null, total_marks:null, is_active:false, starts_at:'', ends_at:'' }); showExam.value=true }
 function openEdit(e){ Object.assign(examForm, { id:e.id, course_id:e.course_id, title_ar:e.title_ar, title_en:e.title_en, time_limit_minutes:e.time_limit_minutes, max_attempts:e.max_attempts, passing_score:e.passing_score, total_marks:e.total_marks, is_active:e.is_active, starts_at:toLocal(e.starts_at), ends_at:toLocal(e.ends_at) }); showExam.value=true }
 function closeExam(){ showExam.value=false }
 
@@ -186,7 +178,7 @@ async function removeQuestion(q){
 
 function toLocal(iso){ if(!iso) return ''; const d=new Date(iso); const pad=(n)=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}` }
 
-onMounted(fetchExams)
+onMounted(async () => { await loadCourses(); await fetchExams() })
 </script>
 
 <style scoped>

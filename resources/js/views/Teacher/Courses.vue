@@ -35,24 +35,7 @@
     <div v-if="show" class="modal">
       <div class="modal-body">
         <h3>{{ form.id ? 'Edit Course' : 'New Course' }}</h3>
-        <form @submit.prevent="save">
-          <label>Title (AR) <input v-model="form.title_ar" required /></label>
-          <label>Title (EN) <input v-model="form.title_en" /></label>
-          <label>Category ID <input v-model.number="form.category_id" type="number" required /></label>
-          <label>Level
-            <select v-model="form.level">
-              <option value="beginner">beginner</option>
-              <option value="intermediate">intermediate</option>
-              <option value="advanced">advanced</option>
-            </select>
-          </label>
-          <label>Is Free <input type="checkbox" v-model="form.is_free" /></label>
-          <label>Is Published <input type="checkbox" v-model="form.is_published" /></label>
-          <div class="modal-actions">
-            <button class="btn" type="submit">Save</button>
-            <button class="btn" type="button" @click="close">Close</button>
-          </div>
-        </form>
+        <CourseForm :modelValue="form" @update:modelValue="v=>Object.assign(form,v)" @submit="save" @cancel="close" />
       </div>
     </div>
   </section>
@@ -60,6 +43,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import api from '../../services/api'
+import CourseForm from '../../components/Forms/CourseForm.vue'
 
 const items = ref([])
 const show = ref(false)

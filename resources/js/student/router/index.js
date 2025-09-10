@@ -9,8 +9,14 @@ import Courses from '../views/Courses.vue'
 import Videos from '../views/Videos.vue'
 import Exams from '../views/Exams.vue'
 import Profile from '../views/Profile.vue'
+import Login from '../views/Login.vue'
+import ForgotPassword from '../views/ForgotPassword.vue'
+import ResetPassword from '../views/ResetPassword.vue'
 
 const routes = [
+  { path: '/student/login', name: 'student.login', component: Login },
+  { path: '/student/forgot', name: 'student.forgot', component: ForgotPassword },
+  { path: '/student/reset', name: 'student.reset', component: ResetPassword },
   { path: '/student', name: 'student.dashboard', component: Dashboard, meta: { requiresAuth: true } },
   { path: '/student/courses', name: 'student.courses', component: Courses, meta: { requiresAuth: true } },
   { path: '/student/videos', name: 'student.videos', component: Videos, meta: { requiresAuth: true } },
@@ -24,8 +30,10 @@ router.beforeEach(async (to, from, next) => {
   const auth = useStudentAuthStore()
   await auth.bootstrap()
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
-    // Student app assumes token exists (login via admin/teacher auth or dedicated student login page if added)
-    return next('/admin/login')
+    return next({ name: 'student.login', query: { redirect: to.fullPath } })
+  }
+  if (to.name === 'student.login' && auth.isAuthenticated) {
+    return next({ name: 'student.dashboard' })
   }
   next()
 })

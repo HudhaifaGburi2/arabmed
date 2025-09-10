@@ -8,12 +8,16 @@ use App\Http\Controllers\Api\V1\ExamController;
 use App\Http\Controllers\Api\V1\ProgressController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Auth\ProfileController;
+use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
 use App\Http\Controllers\Api\V1\ExamAttemptController;
+use App\Http\Controllers\Api\V1\Admin\AdminController;
 
 Route::prefix('v1')->middleware(['localize'])->group(function () {
     // Public auth endpoints
     Route::post('/auth/register', [AuthController::class, 'register']);
     Route::post('/auth/login', [AuthController::class, 'login']);
+    Route::post('/auth/forgot-password', [PasswordResetController::class, 'forgotPassword']);
+    Route::post('/auth/reset-password', [PasswordResetController::class, 'resetPassword']);
 
     Route::get('/courses', [CourseController::class, 'index']);
     Route::get('/courses/{course}', [CourseController::class, 'show']);
@@ -67,6 +71,12 @@ Route::prefix('v1')->middleware(['localize'])->group(function () {
         Route::get('/auth/me', [AuthController::class, 'me']);
         Route::put('/auth/profile', [ProfileController::class, 'update']);
         Route::put('/auth/password', [ProfileController::class, 'changePassword']);
+
+        // Admin-only APIs
+        Route::middleware('role:admin')->group(function () {
+            Route::get('/admin/stats', [AdminController::class, 'stats']);
+            Route::get('/admin/users', [AdminController::class, 'users']);
+        });
 
         // Enroll in a course
         Route::post('/courses/{course}/enroll', [CourseController::class, 'enroll']);

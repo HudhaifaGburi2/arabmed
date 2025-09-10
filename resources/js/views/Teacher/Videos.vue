@@ -2,7 +2,11 @@
   <section>
     <h1>Manage Videos</h1>
     <div class="actions">
-      <button class="btn" @click="openCreate">+ New Video</button>
+      <select v-model.number="courseId" @change="fetchVideos" class="select">
+        <option :value="null">-- Select Course --</option>
+        <option v-for="c in courses" :key="c.id" :value="c.id">#{{ c.id }} - {{ c.title_ar }}</option>
+      </select>
+      <button class="btn" @click="openCreate" :disabled="!courseId">+ New Video</button>
     </div>
 
     <table class="tbl">
@@ -34,29 +38,7 @@
     <div v-if="show" class="modal">
       <div class="modal-body">
         <h3>{{ form.id ? 'Edit Video' : 'New Video' }}</h3>
-        <form @submit.prevent="save">
-          <label>Course ID <input v-model.number="form.course_id" type="number" required /></label>
-          <label>Title (AR) <input v-model="form.title_ar" required /></label>
-          <label>Title (EN) <input v-model="form.title_en" /></label>
-          <label>Video URL <input v-model="form.video_url" required /></label>
-          <label>Thumbnail URL <input v-model="form.thumbnail_url" /></label>
-          <label>Duration (seconds) <input v-model.number="form.duration_seconds" type="number" min="0" /></label>
-          <label>Quality
-            <select v-model="form.video_quality">
-              <option value="">-</option>
-              <option value="360p">360p</option>
-              <option value="720p">720p</option>
-              <option value="1080p">1080p</option>
-              <option value="4k">4k</option>
-            </select>
-          </label>
-          <label>Is Free <input type="checkbox" v-model="form.is_free" /></label>
-          <label>Is Published <input type="checkbox" v-model="form.is_published" /></label>
-          <div class="modal-actions">
-            <button class="btn" type="submit">Save</button>
-            <button class="btn" type="button" @click="close">Close</button>
-          </div>
-        </form>
+        <VideoForm :modelValue="form" @update:modelValue="v=>Object.assign(form,v)" @submit="save" @cancel="close" />
       </div>
     </div>
   </section>
@@ -64,24 +46,27 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import api from '../../services/api'
+import VideoForm from '../../components/Forms/VideoForm.vue'
 
 const items = ref([])
+const courses = ref([])
+const courseId = ref(null)
 const show = ref(false)
 const form = reactive({ id:null, course_id:null, title_ar:'', title_en:'', video_url:'', thumbnail_url:'', duration_seconds:null, video_quality:'', is_free:false, is_published:false })
 
-async function fetchVideos() {
-  // list videos via first course for simplicity (or build a dedicated listing endpoint)
-  const courses = await api.get('/courses?published=false')
-  const first = courses.data?.data?.[0]
-  if (first) {
-    const vids = await api.get(`/courses/${first.id}/videos`)
-    items.value = vids.data?.data || []
-  } else {
-    items.value = []
-  }
+async function loadCourses(){
+  const { data } = await api.get('/courses?published=false')
+  courses.value = data?.data || []
+  if (!courseId.value && courses.value.length) courseId.value = courses.value[0].id
 }
 
-function openCreate(){ Object.assign(form, { id:null, course_id:null, title_ar:'', title_en:'', video_url:'', thumbnail_url:'', duration_seconds:null, video_quality:'', is_free:false, is_published:false }); show.value=true }
+async function fetchVideos() {
+  if (!courseId.value) { items.value = []; return }
+  const vids = await api.get(`/courses/${courseId.value}/videos`)
+  items.value = vids.data?.data || []
+}
+
+function openCreate(){ Object.assign(form, { id:null, course_id:courseId.value, title_ar:'', title_en:'', video_url:'', thumbnail_url:'', duration_seconds:null, video_quality:'', is_free:false, is_published:false }); show.value=true }
 function openEdit(v){ Object.assign(form, { id:v.id, course_id:v.course_id, title_ar:v.title_ar, title_en:v.title_en, video_url:v.video_url, thumbnail_url:v.thumbnail_url, duration_seconds:v.duration_seconds, video_quality:v.video_quality, is_free:v.is_free, is_published:v.is_published }); show.value=true }
 function close(){ show.value=false }
 
@@ -102,7 +87,7 @@ async function remove(v){
   await fetchVideos()
 }
 
-onMounted(fetchVideos)
+onMounted(async () => { await loadCourses(); await fetchVideos() })
 </script>
 <style scoped>
 .tbl{ width:100%; border-collapse: collapse; margin-top:1rem }
