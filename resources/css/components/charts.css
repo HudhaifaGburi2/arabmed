@@ -1,0 +1,559 @@
+/* Chart Components - Arab-Med Platform */
+
+/* Chart Container */
+.chart-container {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.chart-title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--on-surface);
+  margin: 0;
+}
+
+.chart-subtitle {
+  font-size: var(--text-sm);
+  color: var(--on-surface-variant);
+  margin: var(--spacing-xs) 0 0;
+}
+
+.chart-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+/* Chart Canvas */
+.chart-canvas {
+  position: relative;
+  width: 100%;
+  height: 400px;
+}
+
+.chart-canvas canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Chart Sizes */
+.chart-sm .chart-canvas {
+  height: 200px;
+}
+
+.chart-md .chart-canvas {
+  height: 300px;
+}
+
+.chart-lg .chart-canvas {
+  height: 500px;
+}
+
+.chart-xl .chart-canvas {
+  height: 600px;
+}
+
+/* Chart Types */
+.chart-line,
+.chart-area {
+  --chart-primary: var(--primary);
+  --chart-secondary: var(--secondary);
+  --chart-success: var(--success);
+  --chart-warning: var(--warning);
+  --chart-error: var(--error);
+}
+
+.chart-bar {
+  --chart-bar-width: 0.8;
+  --chart-bar-spacing: 0.2;
+}
+
+.chart-doughnut,
+.chart-pie {
+  --chart-cutout: 50%;
+}
+
+.chart-doughnut {
+  --chart-cutout: 70%;
+}
+
+/* Chart Legend */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  justify-content: center;
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--text-sm);
+  color: var(--on-surface);
+}
+
+.chart-legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+/* Chart Tooltip Styles */
+.chart-tooltip {
+  background: var(--surface);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius);
+  padding: var(--spacing-sm);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--text-sm);
+  color: var(--on-surface);
+  max-width: 200px;
+}
+
+.chart-tooltip-title {
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+  color: var(--on-surface);
+}
+
+.chart-tooltip-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.chart-tooltip-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.chart-tooltip-color {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Chart Loading State */
+.chart-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: var(--on-surface-variant);
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.chart-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Chart Error State */
+.chart-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: var(--error);
+  flex-direction: column;
+  gap: var(--spacing-md);
+  text-align: center;
+}
+
+.chart-error-icon {
+  font-size: 48px;
+  opacity: 0.5;
+}
+
+.chart-error-message {
+  font-size: var(--text-sm);
+  color: var(--on-surface-variant);
+}
+
+/* Chart Empty State */
+.chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: var(--on-surface-variant);
+  flex-direction: column;
+  gap: var(--spacing-md);
+  text-align: center;
+}
+
+.chart-empty-icon {
+  font-size: 48px;
+  opacity: 0.3;
+}
+
+.chart-empty-message {
+  font-size: var(--text-sm);
+}
+
+/* Chart Controls */
+.chart-controls {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.chart-period-selector {
+  display: flex;
+  background: var(--surface-variant);
+  border-radius: var(--radius);
+  padding: 2px;
+}
+
+.chart-period-btn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  background: transparent;
+  color: var(--on-surface-variant);
+  font-size: var(--text-sm);
+  border-radius: calc(var(--radius) - 2px);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.chart-period-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--on-surface);
+}
+
+.chart-period-btn.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.chart-export-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: var(--surface);
+  color: var(--on-surface);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  transition: all var(--transition-fast);
+}
+
+.chart-export-btn:hover {
+  background: var(--surface-variant);
+  border-color: var(--primary);
+}
+
+/* Chart Grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+.charts-grid.cols-1 {
+  grid-template-columns: 1fr;
+}
+
+.charts-grid.cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.charts-grid.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Dashboard Chart Variants */
+.dashboard-chart {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow);
+}
+
+.dashboard-chart .chart-canvas {
+  height: 250px;
+}
+
+.dashboard-chart .chart-header {
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+}
+
+.dashboard-chart .chart-title {
+  font-size: var(--text-base);
+}
+
+/* Mini Chart */
+.mini-chart {
+  padding: var(--spacing-md);
+}
+
+.mini-chart .chart-canvas {
+  height: 100px;
+}
+
+.mini-chart .chart-header {
+  margin-bottom: var(--spacing-sm);
+  padding-bottom: var(--spacing-xs);
+}
+
+.mini-chart .chart-title {
+  font-size: var(--text-sm);
+}
+
+.mini-chart .chart-legend {
+  display: none;
+}
+
+/* Chart Annotations */
+.chart-annotation {
+  position: absolute;
+  background: var(--surface);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--text-xs);
+  color: var(--on-surface);
+  box-shadow: var(--shadow-sm);
+  z-index: 10;
+}
+
+.chart-annotation::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--surface);
+}
+
+/* Chart Zoom Controls */
+.chart-zoom-controls {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  z-index: 5;
+}
+
+.chart-zoom-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: var(--surface);
+  color: var(--on-surface);
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  transition: all var(--transition-fast);
+}
+
+.chart-zoom-btn:hover {
+  background: var(--surface-variant);
+  border-color: var(--primary);
+}
+
+.chart-zoom-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Chart Comparison */
+.chart-comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+.chart-comparison .chart-container {
+  margin: 0;
+}
+
+/* Chart Metrics */
+.chart-metrics {
+  display: flex;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.chart-metric {
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+  padding: var(--spacing-md);
+  background: var(--surface-variant);
+  border-radius: var(--radius);
+}
+
+.chart-metric-value {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0;
+}
+
+.chart-metric-label {
+  font-size: var(--text-xs);
+  color: var(--on-surface-variant);
+  margin: var(--spacing-xs) 0 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.chart-metric-change {
+  font-size: var(--text-xs);
+  margin-top: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+}
+
+.chart-metric-change.positive {
+  color: var(--success);
+}
+
+.chart-metric-change.negative {
+  color: var(--error);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+  
+  .charts-grid.cols-2,
+  .charts-grid.cols-3 {
+    grid-template-columns: 1fr;
+  }
+  
+  .chart-container {
+    padding: var(--spacing-lg);
+  }
+  
+  .chart-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-md);
+  }
+  
+  .chart-controls {
+    justify-content: center;
+  }
+  
+  .chart-period-selector {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .chart-comparison {
+    grid-template-columns: 1fr;
+  }
+  
+  .chart-metrics {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+  
+  .chart-legend {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .chart-zoom-controls {
+    position: static;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: var(--spacing-md);
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .chart-header {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .chart-legend {
+  direction: rtl;
+}
+
+[dir="rtl"] .chart-controls {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .chart-zoom-controls {
+  right: auto;
+  left: var(--spacing-md);
+}
+
+[dir="rtl"] .chart-annotation::after {
+  right: 50%;
+  left: auto;
+  transform: translateX(50%);
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .chart-container {
+    background: var(--surface-dark, #1e1e1e);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .chart-tooltip {
+    background: var(--surface-dark, #2d2d2d);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--on-surface-dark, #ffffff);
+  }
+  
+  .chart-loading-spinner {
+    border-color: rgba(255, 255, 255, 0.1);
+    border-top-color: var(--primary);
+  }
+}
