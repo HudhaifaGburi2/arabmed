@@ -49,7 +49,7 @@
         "@context": "https://schema.org",
         "@type": "EducationalOrganization",
         "name": "Arab-Med",
-        "description": "منصة التعليم الطبي الرائدة في العالم العربي",
+        "description": "منصة تعليم الطب العربي",
         "url": "{{ url('/') }}",
         "logo": "{{ asset('images/logo.png') }}",
         "sameAs": [

@@ -1,31 +1,47 @@
-/* Arab-Med Platform - Main CSS Entry Point */
+/* ===================================
+   Arab-Med Main Application Styles
+   =================================== */
 
-/* Base Styles */
-@import 'theme.css';
-@import 'rtl.css';
+/* Theme & Base Styles */
+@import './theme.css';
+@import './rtl.css';
 
 /* Layout Components */
-@import 'layouts/app.css';
-@import 'layouts/header.css';
-@import 'layouts/sidebar.css';
-@import 'layouts/footer.css';
-@import 'layouts/auth.css';
+@import './layouts/app.css';
+@import './layouts/header.css';
+@import './layouts/sidebar.css';
+@import './layouts/footer.css';
+@import './layouts/auth.css';
+@import './layouts/guest.css';
 
 /* Reusable Components */
-@import 'components/card.css';
-@import 'components/navbar.css';
-@import 'components/sidebar.css';
-@import 'components/modal.css';
-@import 'components/table.css';
-@import 'components/form.css';
-@import 'components/buttons.css';
-@import 'components/charts.css';
-@import 'components/utilities.css';
+@import './components/card.css';
+@import './components/button.css';
+@import './components/form.css';
+@import './components/table.css';
+@import './components/modal.css';
+@import './components/navbar.css';
+@import './components/sidebar.css';
+/* Missing for now: alert.css, badge.css, dropdown.css, tooltip.css, progress.css */
+/* @import './components/alert.css'; */
+/* @import './components/badge.css'; */
+/* @import './components/dropdown.css'; */
+/* @import './components/tooltip.css'; */
+/* @import './components/progress.css'; */
+/* charts.css exists (plural) */
+@import './components/charts.css';
 
-/* Page-Specific Styles */
-@import 'pages/welcome.css';
+/* Utility Classes */
+@import './utilities/layout.css';
+/* The following utility files are not present yet; commenting to avoid build errors. */
+/* @import './utilities/spacing.css'; */
+/* @import './utilities/typography.css'; */
+/* @import './utilities/colors.css'; */
+/* @import './utilities/display.css'; */
+/* @import './utilities/flexbox.css'; */
+/* @import './utilities/grid.css'; */
 
-/* Global Overrides and Utilities */
+/* Base Styles */
 * {
   box-sizing: border-box;
 }
@@ -45,12 +61,21 @@ body {
   font-weight: var(--font-weight-normal);
   line-height: var(--line-height-base);
   color: var(--text-primary);
-  background: var(--bg-primary);
+  background: var(--bg-color);
   direction: rtl;
   text-align: right;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Modern base coloring tweaks */
+h1, h2, h3, h4, h5, h6 { color: var(--text-color); }
+a { color: var(--primary); text-decoration: none; }
+a:hover { color: var(--primary-dark); text-decoration: underline; }
+
+/* Section background utility for modern look */
+.section-surface { background: var(--surface); }
+.section-muted { background: var(--surface-variant); }
 
 /* Layout Utilities */
 .container {

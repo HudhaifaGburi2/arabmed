@@ -27,7 +27,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(17, 24, 39, 0.6);
   backdrop-filter: blur(4px);
   cursor: pointer;
 }
@@ -78,7 +78,7 @@
 /* Modal Header */
 .modal-header {
   padding: var(--spacing-xl);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(17, 24, 39, 0.12);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -114,7 +114,7 @@
 }
 
 .modal-close:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(17, 24, 39, 0.08);
   color: var(--on-surface);
 }
 
@@ -146,7 +146,7 @@
 /* Modal Footer */
 .modal-footer {
   padding: var(--spacing-xl);
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid rgba(17, 24, 39, 0.12);
   background: var(--surface-variant);
   display: flex;
   align-items: center;
@@ -269,7 +269,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #000;
+  background: linear-gradient(180deg, var(--bg-dark), var(--primary-900));
 }
 
 .modal-image img {
@@ -281,7 +281,7 @@
 /* Video Modal */
 .modal-video .modal-body {
   padding: 0;
-  background: #000;
+  background: linear-gradient(180deg, var(--bg-dark), var(--primary-900));
 }
 
 .modal-video video {

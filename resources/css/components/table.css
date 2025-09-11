@@ -596,7 +596,7 @@
 
   .table-wrapper {
     box-shadow: none;
-    border: 1px solid #000;
+    border: 1px solid var(--border-color-dark);
   }
 
   .table {

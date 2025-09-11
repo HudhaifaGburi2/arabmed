@@ -6,7 +6,8 @@
     'transparent' => false,
     'color' => 'white',
     'shadow' => true,
-    'class' => ''
+    'class' => '',
+    'autoSolidOnScroll' => true,
 ])
 
 @php
@@ -87,6 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mobile navbar toggle
     const toggleBtn = document.querySelector('[data-toggle="navbar-mobile"]');
     const mobileNav = document.getElementById('navbar-mobile');
+    const navbar = document.querySelector('nav.navbar');
     
     if (toggleBtn && mobileNav) {
         toggleBtn.addEventListener('click', function() {
@@ -102,6 +104,22 @@ document.addEventListener('DOMContentLoaded', function() {
             if (toggleBtn) toggleBtn.classList.remove('active');
         }
     });
+
+    // Solid on scroll when transparent
+    try {
+        const autoSolid = @json($autoSolidOnScroll);
+        if (autoSolid && navbar && navbar.classList.contains('navbar-transparent')) {
+            const onScroll = () => {
+                if (window.scrollY > 20) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            };
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+        }
+    } catch (e) { /* no-op */ }
 });
 </script>
 @endpush

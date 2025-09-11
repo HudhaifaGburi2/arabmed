@@ -1,0 +1,859 @@
+/* Dashboard Page Styles */
+
+/* Page Header */
+.page-header {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+}
+
+.page-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+.page-title-section {
+    flex: 1;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem;
+}
+
+.page-subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.page-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* KPI Section */
+.kpi-section {
+    margin-bottom: 2rem;
+}
+
+.kpi-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--primary-400));
+}
+
+.kpi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.kpi-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.kpi-icon-primary {
+    background: var(--primary-50);
+    color: var(--primary);
+}
+
+.kpi-icon-success {
+    background: var(--success-50);
+    color: var(--success);
+}
+
+.kpi-icon-warning {
+    background: var(--warning-50);
+    color: var(--warning);
+}
+
+.kpi-icon-info {
+    background: var(--info-50);
+    color: var(--info);
+}
+
+.kpi-trend {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius);
+}
+
+.kpi-trend-up {
+    background: var(--success-50);
+    color: var(--success);
+}
+
+.kpi-trend-down {
+    background: var(--error-50);
+    color: var(--error);
+}
+
+.kpi-trend i {
+    font-size: 1rem;
+}
+
+.kpi-content {
+    text-align: left;
+}
+
+.kpi-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.25rem;
+    line-height: 1;
+}
+
+.kpi-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    margin-bottom: 2rem;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.dashboard-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.card-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Progress Overview */
+.progress-overview {
+    space-y: 1.5rem;
+}
+
+.progress-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.progress-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.course-info {
+    flex: 1;
+}
+
+.course-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.25rem;
+}
+
+.course-instructor {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.progress-percentage {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.progress-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--primary-400));
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+}
+
+.progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.lessons-completed {
+    font-weight: 500;
+}
+
+.next-deadline {
+    color: var(--warning);
+    font-weight: 500;
+}
+
+/* Chart Container */
+.chart-container {
+    height: 300px;
+    position: relative;
+}
+
+/* Exam List */
+.exam-list {
+    space-y: 1rem;
+}
+
+.exam-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    transition: var(--transition);
+}
+
+.exam-item:hover {
+    border-color: var(--primary-200);
+    background: var(--primary-25);
+}
+
+.exam-info {
+    flex: 1;
+}
+
+.exam-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.25rem;
+}
+
+.exam-course {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.exam-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
+
+.exam-date {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.exam-duration {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.exam-actions {
+    flex-shrink: 0;
+}
+
+/* Activity Feed */
+.activity-feed {
+    space-y: 1rem;
+}
+
+.activity-item {
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem 0;
+}
+
+.activity-item:not(:last-child) {
+    border-bottom: 1px solid var(--border);
+}
+
+.activity-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.activity-icon-video {
+    background: var(--primary-50);
+    color: var(--primary);
+}
+
+.activity-icon-exam {
+    background: var(--warning-50);
+    color: var(--warning);
+}
+
+.activity-icon-achievement {
+    background: var(--success-50);
+    color: var(--success);
+}
+
+.activity-icon-course {
+    background: var(--info-50);
+    color: var(--info);
+}
+
+.activity-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.activity-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.25rem;
+}
+
+.activity-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0 0 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.activity-time {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+/* Calendar Widget */
+.calendar-widget {
+    max-width: 100%;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.calendar-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.calendar-nav {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.calendar-nav:hover {
+    background: var(--surface);
+    color: var(--text-primary);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.calendar-day-header {
+    background: var(--surface);
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.calendar-day {
+    background: white;
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+}
+
+.calendar-day:hover {
+    background: var(--primary-50);
+    color: var(--primary);
+}
+
+.calendar-day.today {
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+}
+
+.calendar-day.has-event::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--warning);
+    border-radius: 50%;
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.quick-action-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    transition: var(--transition);
+    text-align: center;
+}
+
+.quick-action-item:hover {
+    border-color: var(--primary-200);
+    background: var(--primary-25);
+    transform: translateY(-2px);
+}
+
+.quick-action-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-lg);
+    background: var(--primary-50);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.quick-action-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Form Elements */
+.form-select-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: white;
+    color: var(--text-primary);
+}
+
+/* Button Variants */
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-secondary);
+}
+
+.btn-ghost:hover {
+    background: var(--surface);
+    color: var(--text-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .dashboard-content .grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .kpi-section .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .page-actions {
+        justify-content: stretch;
+    }
+    
+    .page-actions .btn {
+        flex: 1;
+    }
+    
+    .kpi-section .grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .card-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .progress-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .progress-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .exam-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .exam-meta {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .calendar-grid {
+        font-size: 0.75rem;
+    }
+    
+    .calendar-day {
+        padding: 0.375rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .page-header {
+        padding: 1rem 0;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .kpi-card {
+        padding: 1rem;
+    }
+    
+    .kpi-value {
+        font-size: 2rem;
+    }
+    
+    .card-header,
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .activity-item {
+        gap: 0.75rem;
+    }
+    
+    .activity-icon {
+        width: 2rem;
+        height: 2rem;
+        font-size: 1rem;
+    }
+}
+
+/* RTL Support */
+[dir="rtl"] .page-header-content {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .kpi-header {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .progress-header {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .progress-meta {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .exam-item {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .exam-meta {
+    align-items: flex-start;
+}
+
+[dir="rtl"] .activity-item {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .calendar-header {
+    flex-direction: row-reverse;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .page-header {
+        background: var(--surface-dark);
+        border-color: var(--border-dark);
+    }
+    
+    .kpi-card,
+    .dashboard-card {
+        background: var(--surface-dark);
+        border-color: var(--border-dark);
+    }
+    
+    .card-header {
+        background: var(--background-dark);
+        border-color: var(--border-dark);
+    }
+    
+    .exam-item {
+        border-color: var(--border-dark);
+    }
+    
+    .exam-item:hover {
+        background: var(--primary-900);
+    }
+    
+    .calendar-day {
+        background: var(--surface-dark);
+    }
+    
+    .calendar-day-header {
+        background: var(--background-dark);
+    }
+    
+    .quick-action-item {
+        border-color: var(--border-dark);
+    }
+    
+    .quick-action-item:hover {
+        background: var(--primary-900);
+    }
+}
+
+.dark .page-header {
+    background: var(--surface-dark);
+    border-color: var(--border-dark);
+}
+
+.dark .kpi-card,
+.dark .dashboard-card {
+    background: var(--surface-dark);
+    border-color: var(--border-dark);
+}
+
+.dark .card-header {
+    background: var(--background-dark);
+    border-color: var(--border-dark);
+}
+
+.dark .exam-item {
+    border-color: var(--border-dark);
+}
+
+.dark .exam-item:hover {
+    background: var(--primary-900);
+}
+
+.dark .calendar-day {
+    background: var(--surface-dark);
+}
+
+.dark .calendar-day-header {
+    background: var(--background-dark);
+}
+
+.dark .quick-action-item {
+    border-color: var(--border-dark);
+}
+
+.dark .quick-action-item:hover {
+    background: var(--primary-900);
+}
+
+/* Print Styles */
+@media print {
+    .page-actions,
+    .card-actions,
+    .exam-actions,
+    .calendar-nav,
+    .quick-actions {
+        display: none;
+    }
+    
+    .dashboard-card,
+    .kpi-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    .chart-container {
+        height: 200px;
+    }
+}
+
+/* Animation Classes */
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading States */
+.loading-skeleton {
+    background: linear-gradient(90deg, var(--surface) 25%, var(--border) 50%, var(--surface) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Utility Classes */
+.space-y-8 > * + * {
+    margin-top: 2rem;
+}
+
+.space-y-1\.5 > * + * {
+    margin-top: 0.375rem;
+}
