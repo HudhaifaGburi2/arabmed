@@ -1,4 +1,5 @@
 name: Deploy Laravel App to CloudPanel
+
 on:
   push:
     branches: [ main ]
@@ -7,139 +8,117 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Deploy to server via SSH
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: 65.109.166.81
-        username: gburi
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 22
-        timeout: 180s
-        script: |
-          set -e  # Exit on any error
-          
-          echo "=== Starting Laravel Deployment ==="
-          cd /home/gburi-arabmed/htdocs/arabmed.gburi.dev/
-          
-          # Backup current deployment
-          if [ -d "laravel-app" ]; then
-            echo "=== Creating backup ==="
-            cp -r laravel-app laravel-app-backup-$(date +%Y%m%d_%H%M%S)
-            ls -dt laravel-app-backup-* | tail -n +4 | xargs rm -rf
-          fi
-          
-          # Update Laravel
-          if [ -d "laravel-app/.git" ]; then
-            echo "=== Pulling latest changes ==="
+      # 1️⃣ Checkout latest code on GitHub runner
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2️⃣ Deploy via SSH
+      - name: Deploy Laravel App via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          timeout: 180s
+          script: |
+            set -e
+            echo "=== Starting Laravel Deployment ==="
+
+            cd /home/gburi-arabmed/htdocs/arabmed.gburi.dev/
+
+            # Backup current deployment (keep last 3)
+            if [ -d "laravel-app" ]; then
+              echo "=== Creating backup ==="
+              cp -r laravel-app laravel-app-backup-$(date +%Y%m%d_%H%M%S)
+              ls -dt laravel-app-backup-* | tail -n +4 | xargs rm -rf || true
+            fi
+
+            # Pull latest changes from Git
+            if [ -d "laravel-app/.git" ]; then
+              echo "=== Pulling latest changes ==="
+              cd laravel-app
+              git fetch origin main
+              git reset --hard origin/main
+              cd ..
+            else
+              echo "❌ Git repository not found in laravel-app folder!"
+              exit 1
+            fi
+
+            # Install/update dependencies
             cd laravel-app
-            git fetch origin main
-            git reset --hard origin/main
-            cd ..
-          else
-            echo "=== First time clone ==="
-            sudo rm -rf laravel-app
-            git clone https://github.com/HudhaifaGburi2/arabmed.git laravel-app
-          fi
-          
-          echo "=== Installing/Updating Dependencies ==="
-          cd laravel-app
-          if [ ! -f "composer.lock" ]; then
-            echo "⚠️ Warning: composer.lock not found."
-          fi
-          composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-          
-          echo "=== Updating Laravel Configuration ==="
-          if [ ! -f ".env" ]; then
-            cp .env.example .env
-            sed -i 's/APP_ENV=local/APP_ENV=production/' .env
-            sed -i 's/APP_DEBUG=true/APP_DEBUG=false/' .env
-            sed -i 's|APP_URL=http://localhost|APP_URL=https://arabmed.gburi.dev|' .env
-            sed -i 's/DB_DATABASE=laravel/DB_DATABASE=arabmed_db/' .env
-            sed -i 's/DB_USERNAME=root/DB_USERNAME=arabmed_user/' .env
-            sed -i "s/DB_PASSWORD=/DB_PASSWORD=${{ secrets.DB_PASSWORD }}/" .env
+            composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+            # Update .env
+            if [ ! -f ".env" ]; then
+              cp .env.example .env
+            fi
+            sed -i "s|APP_ENV=local|APP_ENV=production|" .env
+            sed -i "s|APP_DEBUG=true|APP_DEBUG=false|" .env
+            sed -i "s|APP_URL=.*|APP_URL=${{ secrets.APP_URL }}|" .env
+            sed -i "s|DB_DATABASE=.*|DB_DATABASE=${{ secrets.DB_DATABASE }}|" .env
+            sed -i "s|DB_USERNAME=.*|DB_USERNAME=${{ secrets.DB_USERNAME }}|" .env
+            sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=${{ secrets.DB_PASSWORD }}|" .env
             php artisan key:generate --force
+
+            # Clear and cache Laravel
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan view:clear
+            php artisan route:clear
+            php artisan event:clear
+
+            # Run database migrations
+            php artisan migrate --force
+
+            # Create storage symlink if not exists
+            if [ ! -L "public/storage" ]; then
+              php artisan storage:link
+            fi
+
+            # Optimize Laravel
+            php artisan config:cache
+            php artisan view:cache
+            php artisan route:cache
+            php artisan event:cache
+
+            # Update public web root
+            cd ..
+            rsync -av --delete laravel-app/public/ public/
+            sed -i "s|__DIR__.'/../vendor/autoload.php'|__DIR__.'/../laravel-app/vendor/autoload.php'|g" public/index.php
+            sed -i "s|__DIR__.'/../bootstrap/app.php'|__DIR__.'/../laravel-app/bootstrap/app.php'|g" public/index.php
+
+            echo "=== Deployment Completed ==="
+            cd laravel-app
+            echo "Latest commit: $(git log --oneline -1)"
+            echo "Laravel version: $(php artisan --version)"
+            echo "Environment: $(php artisan env)"
+
+      # 3️⃣ Verify deployment
+      - name: Verify deployment
+        run: |
+          echo "Waiting 20 seconds for deployment..."
+          sleep 20
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.APP_URL }} || echo "CURL_FAILED")
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "✅ Laravel site is responding correctly (HTTP $HTTP_STATUS)"
+          else
+            echo "⚠️ Site returned HTTP $HTTP_STATUS or failed to connect"
+            RESPONSE=$(curl -s ${{ secrets.APP_URL }} | head -200)
+            if echo "$RESPONSE" | grep -q "500"; then
+              echo "❌ Detected 500 error - check Laravel logs"
+            elif echo "$RESPONSE" | grep -q "404"; then
+              echo "❌ Detected 404 error - check routing configuration"
+            elif echo "$RESPONSE" | grep -q "403"; then
+              echo "❌ Detected 403 error - check permissions"
+            fi
           fi
-          
-          php artisan config:clear
-          php artisan cache:clear
-          php artisan view:clear
-          php artisan route:clear
-          php artisan event:clear
-          
-          echo "=== Running Database Migrations ==="
-          php artisan migrate --force
-          
-          if [ ! -L "public/storage" ]; then
-            echo "=== Creating storage link ==="
-            php artisan storage:link
-          fi
-          
-          echo "=== Optimizing for Production ==="
-          php artisan config:cache
-          php artisan view:cache
-          php artisan route:cache
-          php artisan event:cache
-          
-          echo "=== Updating Web Root ==="
-          cd ..
-          rsync -av --delete laravel-app/public/ public/
-          sed -i "s|__DIR__.'/../vendor/autoload.php'|__DIR__.'/../laravel-app/vendor/autoload.php'|g" public/index.php
-          sed -i "s|__DIR__.'/../bootstrap/app.php'|__DIR__.'/../laravel-app/bootstrap/app.php'|g" public/index.php
-          
-          echo "=== Setting Permissions ==="
-          # Ensure webserver group can write
-          WEBUSER=www-data
-          
-          # Set ownership: user gburi, group www-data
-          chown -R gburi:$WEBUSER /home/gburi-arabmed/htdocs/arabmed.gburi.dev/
-          
-          # Standard directories and files
-          find /home/gburi-arabmed/htdocs/arabmed.gburi.dev/ -type d -exec chmod 755 {} \;
-          find /home/gburi-arabmed/htdocs/arabmed.gburi.dev/ -type f -exec chmod 644 {} \;
-          
-          # Laravel writable directories
-          chmod -R 775 laravel-app/storage laravel-app/bootstrap/cache
-          chgrp -R $WEBUSER laravel-app/storage laravel-app/bootstrap/cache
-          
-          # Make artisan executable
-          chmod +x laravel-app/artisan
-          
-          echo "=== Laravel Deployment Completed Successfully! ==="
-          cd laravel-app
-          echo "Latest commit: $(git log --oneline -1)"
-          echo "Laravel version: $(php artisan --version)"
-          echo "Environment: $(php artisan env)"
-    
-    - name: Verify deployment
-      run: |
-        echo "Waiting 20 seconds for deployment..."
-        sleep 20
-        
-        HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://arabmed.gburi.dev/ || echo "CURL_FAILED")
-        
-        if [ "$HTTP_STATUS" = "200" ]; then
-          echo "✅ Laravel site is responding correctly (HTTP $HTTP_STATUS)"
-          echo "🚀 Deployment successful!"
-        else
-          echo "⚠️ Site returned HTTP $HTTP_STATUS or failed to connect"
-          RESPONSE=$(curl -s https://arabmed.gburi.dev/ | head -200)
-          if echo "$RESPONSE" | grep -q "500"; then
-            echo "❌ Detected 500 error - check Laravel logs"
-          elif echo "$RESPONSE" | grep -q "404"; then
-            echo "❌ Detected 404 error - check routing configuration"
-          elif echo "$RESPONSE" | grep -q "403"; then
-            echo "❌ Detected 403 error - check permissions"
-          fi
-        fi
-    
-    - name: Notify on failure
-      if: failure()
-      run: |
-        echo "❌ Deployment failed!"
-        echo "Check workflow logs for details."
-        echo "Backup should still be available on server."
+
+      # 4️⃣ Notify on failure
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Deployment failed! Check workflow logs."
