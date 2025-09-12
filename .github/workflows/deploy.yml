@@ -1,5 +1,4 @@
 name: Deploy Laravel App to CloudPanel
-
 on:
   push:
     branches: [ main ]
@@ -20,12 +19,21 @@ jobs:
         username: gburi
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
-        timeout: 120s
+        timeout: 180s
         script: |
+          set -e  # Exit on any error
+          
           echo "=== Starting Laravel Deployment ==="
           cd /home/gburi-arabmed/htdocs/arabmed.gburi.dev/
           
-          # Update Laravel application
+          # Backup current deployment
+          if [ -d "laravel-app" ]; then
+            echo "=== Creating backup ==="
+            cp -r laravel-app laravel-app-backup-$(date +%Y%m%d_%H%M%S)
+            ls -dt laravel-app-backup-* | tail -n +4 | xargs rm -rf
+          fi
+          
+          # Update Laravel
           if [ -d "laravel-app/.git" ]; then
             echo "=== Pulling latest changes ==="
             cd laravel-app
@@ -35,18 +43,19 @@ jobs:
           else
             echo "=== First time clone ==="
             sudo rm -rf laravel-app
-            git clone git@github.com:HudhaifaGburi2/arabmed.git laravel-app
+            git clone https://github.com/HudhaifaGburi2/arabmed.git laravel-app
           fi
           
           echo "=== Installing/Updating Dependencies ==="
           cd laravel-app
-          composer install --no-dev --optimize-autoloader --no-interaction
+          if [ ! -f "composer.lock" ]; then
+            echo "⚠️ Warning: composer.lock not found."
+          fi
+          composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
           
           echo "=== Updating Laravel Configuration ==="
-          # Copy .env if it doesn't exist
           if [ ! -f ".env" ]; then
             cp .env.example .env
-            # Set production environment variables
             sed -i 's/APP_ENV=local/APP_ENV=production/' .env
             sed -i 's/APP_DEBUG=true/APP_DEBUG=false/' .env
             sed -i 's|APP_URL=http://localhost|APP_URL=https://arabmed.gburi.dev|' .env
@@ -56,49 +65,81 @@ jobs:
             php artisan key:generate --force
           fi
           
-          # Clear and cache config
           php artisan config:clear
           php artisan cache:clear
           php artisan view:clear
           php artisan route:clear
+          php artisan event:clear
           
-          # Optimize for production
+          echo "=== Running Database Migrations ==="
+          php artisan migrate --force
+          
+          if [ ! -L "public/storage" ]; then
+            echo "=== Creating storage link ==="
+            php artisan storage:link
+          fi
+          
+          echo "=== Optimizing for Production ==="
           php artisan config:cache
           php artisan view:cache
           php artisan route:cache
+          php artisan event:cache
           
           echo "=== Updating Web Root ==="
           cd ..
-          # Copy Laravel public files to web root
-          cp -r laravel-app/public/* public/
-          cp laravel-app/public/.htaccess public/ 2>/dev/null || true
-          
-          # Make sure index.php points to correct Laravel path
+          rsync -av --delete laravel-app/public/ public/
           sed -i "s|__DIR__.'/../vendor/autoload.php'|__DIR__.'/../laravel-app/vendor/autoload.php'|g" public/index.php
           sed -i "s|__DIR__.'/../bootstrap/app.php'|__DIR__.'/../laravel-app/bootstrap/app.php'|g" public/index.php
           
           echo "=== Setting Permissions ==="
-          chmod -R 755 /home/gburi-arabmed/htdocs/arabmed.gburi.dev/
-          chmod -R 775 /home/gburi-arabmed/htdocs/arabmed.gburi.dev/laravel-app/storage
-          chmod -R 775 /home/gburi-arabmed/htdocs/arabmed.gburi.dev/laravel-app/bootstrap/cache
+          # Ensure webserver group can write
+          WEBUSER=www-data
           
-          echo "=== Laravel Deployment Completed! ==="
+          # Set ownership: user gburi, group www-data
+          chown -R gburi:$WEBUSER /home/gburi-arabmed/htdocs/arabmed.gburi.dev/
+          
+          # Standard directories and files
+          find /home/gburi-arabmed/htdocs/arabmed.gburi.dev/ -type d -exec chmod 755 {} \;
+          find /home/gburi-arabmed/htdocs/arabmed.gburi.dev/ -type f -exec chmod 644 {} \;
+          
+          # Laravel writable directories
+          chmod -R 775 laravel-app/storage laravel-app/bootstrap/cache
+          chgrp -R $WEBUSER laravel-app/storage laravel-app/bootstrap/cache
+          
+          # Make artisan executable
+          chmod +x laravel-app/artisan
+          
+          echo "=== Laravel Deployment Completed Successfully! ==="
           cd laravel-app
-          git log --oneline -1
-          php artisan --version
+          echo "Latest commit: $(git log --oneline -1)"
+          echo "Laravel version: $(php artisan --version)"
+          echo "Environment: $(php artisan env)"
     
     - name: Verify deployment
       run: |
-        echo "Waiting 15 seconds for deployment to complete..."
-        sleep 15
+        echo "Waiting 20 seconds for deployment..."
+        sleep 20
         
         HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://arabmed.gburi.dev/ || echo "CURL_FAILED")
         
         if [ "$HTTP_STATUS" = "200" ]; then
           echo "✅ Laravel site is responding correctly (HTTP $HTTP_STATUS)"
           echo "🚀 Deployment successful!"
-          echo "🌐 Visit: https://arabmed.gburi.dev"
         else
           echo "⚠️ Site returned HTTP $HTTP_STATUS or failed to connect"
-          echo "Please check manually: https://arabmed.gburi.dev"
+          RESPONSE=$(curl -s https://arabmed.gburi.dev/ | head -200)
+          if echo "$RESPONSE" | grep -q "500"; then
+            echo "❌ Detected 500 error - check Laravel logs"
+          elif echo "$RESPONSE" | grep -q "404"; then
+            echo "❌ Detected 404 error - check routing configuration"
+          elif echo "$RESPONSE" | grep -q "403"; then
+            echo "❌ Detected 403 error - check permissions"
+          fi
         fi
+    
+    - name: Notify on failure
+      if: failure()
+      run: |
+        echo "❌ Deployment failed!"
+        echo "Check workflow logs for details."
+        echo "Backup should still be available on server."
