@@ -1,9 +1,9 @@
-name: Deploy via Rsync to CloudPanel
+name: Deploy to CloudPanel Server
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
+  workflow_dispatch: # Allows manual trigger
 
 jobs:
   deploy:
@@ -13,12 +13,23 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Deploy to server
-      uses: burnett01/rsync-deployments@7.0.1
+    - name: Deploy to server via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
-        switches: -avzr --delete --exclude='.git' --exclude='.github'
-        path: ./
-        remote_path: /home/gburi-arabmed/htdocs/arabmed.gburi.dev/public/
-        remote_host: 65.109.166.81
-        remote_user: gburi-arabmed
-        remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        server: 65.109.166.81
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./
+        server-dir: /home/gburi-arabmed/htdocs/arabmed.gburi.dev/public/
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          .github/
+          README.md
+          .gitignore
+        
+    - name: Verify deployment
+      run: |
+        echo "Deployment completed successfully!"
+        echo "Site should be available at: https://arabmed.gburi.dev"
