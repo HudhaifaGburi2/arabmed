@@ -1,4 +1,4 @@
-name: Deploy via SSH Key to CloudPanel
+name: Deploy Laravel App to CloudPanel
 
 on:
   push:
@@ -20,75 +20,85 @@ jobs:
         username: gburi
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
-        timeout: 60s
+        timeout: 120s
         script: |
-          echo "=== Starting Deployment ==="
-          echo "Current user: $(whoami)"
-          echo "Current time: $(date)"
+          echo "=== Starting Laravel Deployment ==="
+          cd /home/gburi-arabmed/htdocs/arabmed.gburi.dev/
           
-          # Navigate to deployment directory
-          cd /home/gburi-arabmed/htdocs/arabmed.gburi.dev/public
-          echo "=== Current directory: $(pwd) ==="
-          
-          # Check if git repository exists
-          if [ -d ".git" ]; then
-            echo "=== Repository exists, pulling latest changes ==="
+          # Update Laravel application
+          if [ -d "laravel-app/.git" ]; then
+            echo "=== Pulling latest changes ==="
+            cd laravel-app
             git fetch origin main
             git reset --hard origin/main
-            echo "=== Git pull completed ==="
+            cd ..
           else
-            echo "=== First time deployment ==="
-            echo "=== Cloning repository via SSH ==="
-            # Remove any existing files
-            sudo rm -rf * .[^.]*
-            # Clone the repository via SSH
-            git clone git@github.com:HudhaifaGburi2/arabmed.git .
-            echo "=== Clone completed ==="
+            echo "=== First time clone ==="
+            sudo rm -rf laravel-app
+            git clone git@github.com:HudhaifaGburi2/arabmed.git laravel-app
           fi
           
-          echo "=== Setting proper permissions ==="
-          sudo chown -R gburi-arabmed:gburi-arabmed /home/gburi-arabmed/htdocs/arabmed.gburi.dev/public
-          sudo chmod -R 755 /home/gburi-arabmed/htdocs/arabmed.gburi.dev/public
+          echo "=== Installing/Updating Dependencies ==="
+          cd laravel-app
+          composer install --no-dev --optimize-autoloader --no-interaction
           
-          # Run any build commands if needed
-          # echo "=== Running build commands ==="
-          # if [ -f "package.json" ]; then
-          #   npm install
-          #   npm run build
-          # fi
-          # if [ -f "composer.json" ]; then
-          #   composer install --no-dev --optimize-autoloader
-          # fi
+          echo "=== Updating Laravel Configuration ==="
+          # Copy .env if it doesn't exist
+          if [ ! -f ".env" ]; then
+            cp .env.example .env
+            # Set production environment variables
+            sed -i 's/APP_ENV=local/APP_ENV=production/' .env
+            sed -i 's/APP_DEBUG=true/APP_DEBUG=false/' .env
+            sed -i 's|APP_URL=http://localhost|APP_URL=https://arabmed.gburi.dev|' .env
+            sed -i 's/DB_DATABASE=laravel/DB_DATABASE=arabmed_db/' .env
+            sed -i 's/DB_USERNAME=root/DB_USERNAME=arabmed_user/' .env
+            sed -i "s/DB_PASSWORD=/DB_PASSWORD=${{ secrets.DB_PASSWORD }}/" .env
+            php artisan key:generate --force
+          fi
           
-          echo "=== Deployment completed successfully! ==="
+          # Clear and cache config
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan view:clear
+          php artisan route:clear
           
-          # Show deployment info
-          echo "=== Current commit ==="
-          git log --oneline -3
+          # Optimize for production
+          php artisan config:cache
+          php artisan view:cache
+          php artisan route:cache
           
-          echo "=== Repository status ==="
-          git status --porcelain
+          echo "=== Updating Web Root ==="
+          cd ..
+          # Copy Laravel public files to web root
+          cp -r laravel-app/public/* public/
+          cp laravel-app/public/.htaccess public/ 2>/dev/null || true
           
-          echo "=== Files in web root ==="
-          ls -la | head -10
+          # Make sure index.php points to correct Laravel path
+          sed -i "s|__DIR__.'/../vendor/autoload.php'|__DIR__.'/../laravel-app/vendor/autoload.php'|g" public/index.php
+          sed -i "s|__DIR__.'/../bootstrap/app.php'|__DIR__.'/../laravel-app/bootstrap/app.php'|g" public/index.php
+          
+          echo "=== Setting Permissions ==="
+          chmod -R 755 /home/gburi-arabmed/htdocs/arabmed.gburi.dev/
+          chmod -R 775 /home/gburi-arabmed/htdocs/arabmed.gburi.dev/laravel-app/storage
+          chmod -R 775 /home/gburi-arabmed/htdocs/arabmed.gburi.dev/laravel-app/bootstrap/cache
+          
+          echo "=== Laravel Deployment Completed! ==="
+          cd laravel-app
+          git log --oneline -1
+          php artisan --version
     
     - name: Verify deployment
       run: |
         echo "Waiting 15 seconds for deployment to complete..."
         sleep 15
         
-        # Check if site is responding
-        echo "Checking site availability..."
         HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://arabmed.gburi.dev/ || echo "CURL_FAILED")
         
-        if [ "$HTTP_STATUS" = "200" ] || [ "$HTTP_STATUS" = "301" ] || [ "$HTTP_STATUS" = "302" ]; then
-          echo "✅ Site is responding correctly (HTTP $HTTP_STATUS)"
+        if [ "$HTTP_STATUS" = "200" ]; then
+          echo "✅ Laravel site is responding correctly (HTTP $HTTP_STATUS)"
           echo "🚀 Deployment successful!"
           echo "🌐 Visit: https://arabmed.gburi.dev"
-        elif [ "$HTTP_STATUS" = "CURL_FAILED" ]; then
-          echo "⚠️  Could not reach the site (network issue)"
-          echo "Please check manually: https://arabmed.gburi.dev"
         else
-          echo "❌ Site returned HTTP $HTTP_STATUS"
-          echo "Please check the deployment manually: https://arabmed.gburi.dev"
+          echo "⚠️ Site returned HTTP $HTTP_STATUS or failed to connect"
+          echo "Please check manually: https://arabmed.gburi.dev"
         fi
