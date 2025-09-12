@@ -1,0 +1,24 @@
+name: Deploy via Rsync to CloudPanel
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Deploy to server
+      uses: burnett01/rsync-deployments@7.0.1
+      with:
+        switches: -avzr --delete --exclude='.git' --exclude='.github'
+        path: ./
+        remote_path: /home/gburi-arabmed/htdocs/arabmed.gburi.dev/public/
+        remote_host: 65.109.166.81
+        remote_user: gburi-arabmed
+        remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
