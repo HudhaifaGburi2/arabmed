@@ -1,9 +1,9 @@
-name: Deploy to CloudPanel Server
+name: Deploy via SSH Key to CloudPanel
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # Allows manual trigger
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -13,23 +13,82 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Deploy to server via FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+    - name: Deploy to server via SSH
+      uses: appleboy/ssh-action@v1.0.3
       with:
-        server: 65.109.166.81
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./
-        server-dir: /home/gburi-arabmed/htdocs/arabmed.gburi.dev/public/
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/node_modules/**
-          .github/
-          README.md
-          .gitignore
-        
+        host: 65.109.166.81
+        username: gburi
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        timeout: 60s
+        script: |
+          echo "=== Starting Deployment ==="
+          echo "Current user: $(whoami)"
+          echo "Current time: $(date)"
+          
+          # Navigate to deployment directory
+          cd /home/gburi-arabmed/htdocs/arabmed.gburi.dev/public
+          echo "=== Current directory: $(pwd) ==="
+          
+          # Check if git repository exists
+          if [ -d ".git" ]; then
+            echo "=== Repository exists, pulling latest changes ==="
+            git fetch origin main
+            git reset --hard origin/main
+            echo "=== Git pull completed ==="
+          else
+            echo "=== First time deployment ==="
+            echo "=== Cloning repository via SSH ==="
+            # Remove any existing files
+            sudo rm -rf * .[^.]*
+            # Clone the repository via SSH
+            git clone git@github.com:HudhaifaGburi2/arabmed.git .
+            echo "=== Clone completed ==="
+          fi
+          
+          echo "=== Setting proper permissions ==="
+          sudo chown -R gburi-arabmed:gburi-arabmed /home/gburi-arabmed/htdocs/arabmed.gburi.dev/public
+          sudo chmod -R 755 /home/gburi-arabmed/htdocs/arabmed.gburi.dev/public
+          
+          # Run any build commands if needed
+          # echo "=== Running build commands ==="
+          # if [ -f "package.json" ]; then
+          #   npm install
+          #   npm run build
+          # fi
+          # if [ -f "composer.json" ]; then
+          #   composer install --no-dev --optimize-autoloader
+          # fi
+          
+          echo "=== Deployment completed successfully! ==="
+          
+          # Show deployment info
+          echo "=== Current commit ==="
+          git log --oneline -3
+          
+          echo "=== Repository status ==="
+          git status --porcelain
+          
+          echo "=== Files in web root ==="
+          ls -la | head -10
+    
     - name: Verify deployment
       run: |
-        echo "Deployment completed successfully!"
-        echo "Site should be available at: https://arabmed.gburi.dev"
+        echo "Waiting 15 seconds for deployment to complete..."
+        sleep 15
+        
+        # Check if site is responding
+        echo "Checking site availability..."
+        HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://arabmed.gburi.dev/ || echo "CURL_FAILED")
+        
+        if [ "$HTTP_STATUS" = "200" ] || [ "$HTTP_STATUS" = "301" ] || [ "$HTTP_STATUS" = "302" ]; then
+          echo "✅ Site is responding correctly (HTTP $HTTP_STATUS)"
+          echo "🚀 Deployment successful!"
+          echo "🌐 Visit: https://arabmed.gburi.dev"
+        elif [ "$HTTP_STATUS" = "CURL_FAILED" ]; then
+          echo "⚠️  Could not reach the site (network issue)"
+          echo "Please check manually: https://arabmed.gburi.dev"
+        else
+          echo "❌ Site returned HTTP $HTTP_STATUS"
+          echo "Please check the deployment manually: https://arabmed.gburi.dev"
+        fi
