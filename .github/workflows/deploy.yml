@@ -18,8 +18,8 @@ jobs:
       - name: Execute remote deploy script
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.PORT }}
-          script: sh /home/${{ secrets.USERNAME }}/git/deploy.sh
+          port: ${{ secrets.SERVER_PORT }}
+          script: sh /home/${{ secrets.SERVER_USER }}/git/deploy.sh
